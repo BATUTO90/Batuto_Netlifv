@@ -1,1 +1,16 @@
-Add package.json with dependencies and build scripts
+{
+  "name": "batuto_ia_soamf",
+  "version": "1.0.0",
+  "description": "Orquestación de agentes IA BATUTO_IA_SOAMF",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "openai": "^5.0.0",
+    "node-fetch": "^3.2.10"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0"
+  }
+}
