@@ -1,1 +1,11 @@
-Add Netlify build configuration
+[build]
+  publish = "public"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+
+[settings.environment]
+  OPENAI_API_KEY = ""
+  HUGGINGFACE_API_KEY = ""
+  
