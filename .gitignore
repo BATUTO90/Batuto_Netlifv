@@ -1,1 +1,11 @@
-Add .gitignore to exclude node_modules and env files
+node_modules/
+.env
+logs/
+*.log
+npm-debug.log*
+dist/
+build/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
