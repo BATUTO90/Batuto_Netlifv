@@ -4,13 +4,42 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BATUTO IA SOAMF - Orquestación</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: auto;
+    padding: 1em;
+    background: #f9f9f9;
+  }
+  textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5em;
+    resize: vertical;
+  }
+  button {
+    margin-top: 10px;
+    padding: 0.5em 1em;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  pre {
+    background: #222;
+    color: #ddd;
+    padding: 1em;
+    white-space: pre-wrap;
+    border-radius: 5px;
+    min-height: 150px;
+  }
+</style>
 </head>
 <body>
   <h1>BATUTO IA SOAMF</h1>
   <textarea id="inputPrompt" rows="4" cols="50" placeholder="Escribe tu pregunta o comando..."></textarea>
   <br />
-  <button onclick="sendPrompt('hug')">Enviar a HuggingFace</button>
-  <button onclick="sendPrompt('openai')">Enviar a OpenAI</button>
+  <button id="sendBtn" onclick="sendPrompt('hug')">Enviar a HuggingFace</button>
+  <button id="sendBtn2" onclick="sendPrompt('openai')">Enviar a OpenAI</button>
   <h2>Respuesta:</h2>
   <pre id="responseOutput"></pre>
 
@@ -40,18 +69,41 @@
     }
 
     async function sendPrompt(type) {
+      const btn1 = document.getElementById('sendBtn');
+      const btn2 = document.getElementById('sendBtn2');
       const prompt = document.getElementById('inputPrompt').value.trim();
-      if (!prompt) return;
       const outputEl = document.getElementById('responseOutput');
+
+      if (!prompt) {
+        outputEl.textContent = 'Por favor ingresa un texto.';
+        return;
+      }
+
+      btn1.disabled = true;
+      btn2.disabled = true;
       outputEl.textContent = 'Procesando...';
+
+      const cacheKey = `${type}_${prompt}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        outputEl.textContent = cached + ' (desde caché)';
+        btn1.disabled = false;
+        btn2.disabled = false;
+        return;
+      }
 
       try {
         let response;
         if (type === 'hug') response = await callHuggingFaceModel(prompt);
         else if (type === 'openai') response = await callOpenAI(prompt);
+
+        localStorage.setItem(cacheKey, response);
         outputEl.textContent = response;
-      } catch (e) {
-        outputEl.textContent = `Error: ${e.message}`;
+      } catch (error) {
+        outputEl.textContent = `Error: ${error.message}`;
+      } finally {
+        btn1.disabled = false;
+        btn2.disabled = false;
       }
     }
   </script>
