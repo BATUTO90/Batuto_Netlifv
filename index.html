@@ -3,16 +3,57 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BATUTO_IA_SOAMF</title>
+<title>BATUTO IA SOAMF - Orquestación</title>
 </head>
 <body>
-  <h1>BATUTO IA SOAMF - Orquestación de Agentes</h1>
-  <textarea id="inputPrompt" placeholder="Escribe tu pregunta o comando..." rows="4" cols="50"></textarea>
+  <h1>BATUTO IA SOAMF</h1>
+  <textarea id="inputPrompt" rows="4" cols="50" placeholder="Escribe tu pregunta o comando..."></textarea>
   <br />
-  <button onclick="sendPrompt()">Enviar</button>
+  <button onclick="sendPrompt('hug')">Enviar a HuggingFace</button>
+  <button onclick="sendPrompt('openai')">Enviar a OpenAI</button>
   <h2>Respuesta:</h2>
   <pre id="responseOutput"></pre>
 
-  <script src="main.js"></script>
+  <script>
+    async function callHuggingFaceModel(prompt) {
+      const response = await fetch('/.netlify/functions/hug-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+      if (!response.ok) throw new Error(`Error HuggingFace: ${response.statusText}`);
+      const result = await response.json();
+      if (Array.isArray(result) && result[0]?.generated_text) return result[0].generated_text;
+      if (result.generated_text) return result.generated_text;
+      return JSON.stringify(result);
+    }
+
+    async function callOpenAI(prompt) {
+      const response = await fetch('/.netlify/functions/openai-api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+      if (!response.ok) throw new Error('Error OpenAI');
+      const data = await response.json();
+      return data.choices[0]?.message?.content ?? 'No response from OpenAI';
+    }
+
+    async function sendPrompt(type) {
+      const prompt = document.getElementById('inputPrompt').value.trim();
+      if (!prompt) return;
+      const outputEl = document.getElementById('responseOutput');
+      outputEl.textContent = 'Procesando...';
+
+      try {
+        let response;
+        if (type === 'hug') response = await callHuggingFaceModel(prompt);
+        else if (type === 'openai') response = await callOpenAI(prompt);
+        outputEl.textContent = response;
+      } catch (e) {
+        outputEl.textContent = `Error: ${e.message}`;
+      }
+    }
+  </script>
 </body>
 </html>
