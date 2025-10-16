@@ -6,15 +6,13 @@
 <title>BATUTO_IA_SOAMF</title>
 </head>
 <body>
-<h1>BATUTO IA SOAMF - Orquestación de Agentes</h1>
+  <h1>BATUTO IA SOAMF - Orquestación de Agentes</h1>
+  <textarea id="inputPrompt" placeholder="Escribe tu pregunta o comando..." rows="4" cols="50"></textarea>
+  <br />
+  <button onclick="sendPrompt()">Enviar</button>
+  <h2>Respuesta:</h2>
+  <pre id="responseOutput"></pre>
 
-<textarea id="inputPrompt" placeholder="Escribe tu pregunta o comando..." rows="4" cols="50"></textarea>
-<br />
-<button onclick="sendPrompt()">Enviar</button>
-
-<h2>Respuesta:</h2>
-<pre id="responseOutput"></pre>
-
-<script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
